@@ -1,0 +1,54 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>HeliArcadeControls</AssemblyName>
+    <RootNamespace>HeliArcadeControls</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>disable</Nullable>
+
+    <!-- For release builds: keep debug info (.pdb) and local folder paths out of the DLL -->
+    <DebugType>none</DebugType>
+    <PathMap>$(MSBuildProjectDirectory)=HeliArcadeControls</PathMap>
+
+    <!-- Copy 0Harmony.dll to the build output folder -->
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+
+    <!-- Tells the Unturned.MSBuild package to use the client (game) DLLs -->
+    <UnturnedBuild>Client</UnturnedBuild>
+
+    <!-- Unturned install folder. If Unturned is installed somewhere else, change only this line. -->
+    <UnturnedDir>C:\Program Files (x86)\Steam\steamapps\common\Unturned</UnturnedDir>
+    <ModuleDir>$(UnturnedDir)\Modules\HeliArcadeControls</ModuleDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Unturned.MSBuild" Version="1.0.1" PrivateAssets="all" />
+    <PackageReference Include="Lib.Harmony" Version="2.3.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <UnturnedReference Include="Assembly-CSharp" />
+    <UnturnedReference Include="UnityEngine" />
+    <UnturnedReference Include="UnityEngine.CoreModule" />
+    <UnturnedReference Include="UnityEngine.PhysicsModule" />
+    <!-- WheelCollider (used to find the helicopter's true level from the wheel positions) -->
+    <UnturnedReference Include="UnityEngine.VehiclesModule" />
+  </ItemGroup>
+
+  <!--
+    After each build, HeliArcadeControls.dll, 0Harmony.dll and HeliArcadeControls.module
+    are copied to Unturned\Modules\HeliArcadeControls automatically.
+    The copy fails while the game is running, so close the game before building.
+  -->
+  <Target Name="InstallAsUnturnedModule" AfterTargets="Build">
+    <ItemGroup>
+      <ModuleFiles Include="$(TargetPath)" />
+      <ModuleFiles Include="$(TargetDir)0Harmony.dll" />
+      <ModuleFiles Include="$(MSBuildProjectDirectory)\HeliArcadeControls.module" />
+    </ItemGroup>
+    <Copy SourceFiles="@(ModuleFiles)" DestinationFolder="$(ModuleDir)" ContinueOnError="true" />
+    <Message Importance="high" Text="[HeliArcadeControls] installed to $(ModuleDir)" />
+  </Target>
+
+</Project>

@@ -1,0 +1,15 @@
+{
+    "IsEnabled": true,
+    "Name": "HeliArcadeControls",
+    "Version": "3.3.0.0",
+    "Assemblies": [
+        {
+            "Path": "/HeliArcadeControls.dll",
+            "Role": "Both_Optional"
+        },
+        {
+            "Path": "/0Harmony.dll",
+            "Role": "Both_Optional"
+        }
+    ]
+}
